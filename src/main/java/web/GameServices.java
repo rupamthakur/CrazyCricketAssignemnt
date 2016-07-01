@@ -7,11 +7,10 @@ package web;
 import dao.GameDAO;
 import pojo.Game;
 import pojo.GameLeaderBoardService;
+import web.response.CountryPlayerPair;
 import web.response.NameValuePair;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -28,11 +27,23 @@ public class GameServices {
         return new GameDAO().getAllGames();
     }
 
+    /*
     @GET
     @Path("/leaderboard")
     @Produces(MediaType.APPLICATION_JSON)
     public List<NameValuePair> getCountryLeaderBoard(){
         return gameLeaderBoardService.getCountryLeaderBoard();
+    }
+    */
+
+    @GET
+    @Path("/leaderboard")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<NameValuePair> getCountryLeaderBoard(@DefaultValue("null")@QueryParam("start") String start, @DefaultValue("null")@QueryParam("end") String end){
+        if(start.equals("null") || end.equals("null"))
+            return gameLeaderBoardService.getCountryLeaderBoard();
+        else
+            return gameLeaderBoardService.getCountryLeaderBoard(start,end);
     }
 
     @GET
