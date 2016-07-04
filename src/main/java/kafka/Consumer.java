@@ -20,7 +20,7 @@ import java.util.*;
 public class Consumer {
 
     private GameDAO gameDAO = new GameDAO();
-    public void consume() throws IOException {
+    public void consume( String kafkaPort) throws IOException {
         // set up house-keeping
 
         // and the consumer
@@ -29,6 +29,7 @@ public class Consumer {
         {
             Properties properties = new Properties();
             properties.load(props);
+            properties.setProperty("bootstrap.servers",kafkaPort);
             if (properties.getProperty("group.id") == null) {
                 properties.setProperty("group.id", "group-" + new Random().nextInt(100000));
             }
@@ -79,9 +80,10 @@ public class Consumer {
 
     public static void main(String[] args){
         System.out.println("In Main");
+        System.out.println(args[0]);
         Consumer consumer = new Consumer();
         try {
-            consumer.consume();
+            consumer.consume(args[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }

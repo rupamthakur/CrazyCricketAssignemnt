@@ -81,19 +81,46 @@
         <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>2.4</version>
-            <configuration>
-                <archive>
-                    <manifest>
-                        <!--<mainClass>com.mapr.examples.Run</mainClass>-->
-                    </manifest>
-                </archive>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-            </configuration>
             <executions>
                 <execution>
-                    <id>make-assembly</id>
+                    <id>build-driver</id>
+                    <configuration>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <archive>
+                            <manifest>
+                                <mainClass>web.Driver</mainClass>
+                                <classpathPrefix>dependency-jars/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>
+                                jar-with-dependencies
+                            </descriptorRef>
+                        </descriptorRefs>
+                        <finalName>${project.artifactId}-driver</finalName>
+                    </configuration>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>build-consumer</id>
+                    <configuration>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <archive>
+                            <manifest>
+                                <mainClass>kafka.Consumer</mainClass>
+                                <classpathPrefix>dependency-jars/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>
+                                jar-with-dependencies
+                            </descriptorRef>
+                        </descriptorRefs>
+                        <finalName>${project.artifactId}-consumer</finalName>
+                    </configuration>
                     <phase>package</phase>
                     <goals>
                         <goal>single</goal>
@@ -114,13 +141,30 @@
                 <!-- make the regular jar artifact executable -->
                 <programFile>kafka-example</programFile>
             </configuration>
-
             <executions>
                 <execution>
                     <phase>package</phase>
                     <goals>
                         <goal>really-executable-jar</goal>
                     </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.5.1</version>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <includeScope>runtime</includeScope>
+                        <outputDirectory>${project.build.directory}/dependency-jars</outputDirectory>
+                    </configuration>
                 </execution>
             </executions>
         </plugin>
